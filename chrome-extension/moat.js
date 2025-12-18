@@ -1,5 +1,9 @@
 // Moat Moat - Sidebar Component
 (function() {
+  // Build identifier - incremented with each code change to verify correct version is loaded
+  const BUILD_VERSION = 2;
+  console.log(`🏰 Drawbridge v${BUILD_VERSION} loaded`);
+
   let moat = null;
   let isVisible = false;
   let draggedItem = null;
