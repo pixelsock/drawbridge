@@ -3140,11 +3140,11 @@ JSON stores relative paths like \`./screenshots/file.png\`, but actual files are
     container.appendChild(commentBox);
 
     // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
-    // Radix UI listens to mousedown/pointerdown, not just click
+    // Use bubble phase so our handlers fire first, then stop propagation to page
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       commentBox.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true); // Use capture phase to catch events early
+      });
     });
 
     // Prevent modal libraries from hiding comment box via aria-hidden/inert
@@ -3507,11 +3507,11 @@ JSON stores relative paths like \`./screenshots/file.png\`, but actual files are
     container.appendChild(commentBox);
 
     // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
-    // Radix UI listens to mousedown/pointerdown, not just click
+    // Use bubble phase so our handlers fire first, then stop propagation to page
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       commentBox.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true); // Use capture phase to catch events early
+      });
     });
 
     // Prevent modal libraries from hiding comment box via aria-hidden/inert

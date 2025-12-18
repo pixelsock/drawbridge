@@ -1,8 +1,8 @@
 // Moat Moat - Sidebar Component
 (function() {
   // Build identifier - incremented with each code change to verify correct version is loaded
-  const BUILD_VERSION = 2;
-  console.log(`🏰 Drawbridge v${BUILD_VERSION} loaded`);
+  const BUILD_VERSION = 4;
+  console.log('%c 🏰 DRAWBRIDGE v' + BUILD_VERSION + ' ', 'background: #e74c3c; color: white; font-size: 14px; padding: 4px 8px; border-radius: 4px;');
 
   let moat = null;
   let isVisible = false;
@@ -1221,11 +1221,11 @@
 
     // Prevent all mouse/pointer events inside the moat from bubbling to the page
     // This prevents extension UI from triggering page modal closes (e.g., Radix UI dialogs)
-    // Radix UI listens to mousedown/pointerdown, not just click
+    // Use bubble phase so our button handlers fire first, then we stop propagation to page
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       moat.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true); // Use capture phase to catch events early
+      }); // Bubble phase - events reach buttons first, then stop here
     });
 
     // Event listeners
@@ -1348,7 +1348,7 @@
       ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
         modal.addEventListener(eventType, function(e) {
           e.stopPropagation();
-        }, true);
+        });
       });
 
       modal.querySelector('.float-modal-cancel').addEventListener('click', () => {
@@ -1448,7 +1448,7 @@
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       menu.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true);
+      });
     });
 
     // Position menu below button (or above if docked at bottom)
@@ -1540,7 +1540,7 @@
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       menu.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true);
+      });
     });
 
     // Position menu below button (or above if docked at bottom)
@@ -1705,7 +1705,7 @@
     ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
       menu.addEventListener(eventType, function(e) {
         e.stopPropagation();
-      }, true);
+      });
     });
 
     // Position menu using shared positioning function
@@ -1903,7 +1903,7 @@
       ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
         modal.addEventListener(eventType, function(e) {
           e.stopPropagation();
-        }, true);
+        });
       });
 
       // Handle modal button clicks
