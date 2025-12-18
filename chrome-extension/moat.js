@@ -1196,7 +1196,31 @@
     
     document.body.appendChild(moat);
     console.log('Moat: Sidebar element added to DOM');
-    
+
+    // Prevent modal libraries (Radix UI, etc.) from hiding our extension via aria-hidden
+    // They set aria-hidden="true" on all body children when a modal opens
+    const ariaHiddenObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+          if (moat.getAttribute('aria-hidden') === 'true') {
+            moat.removeAttribute('aria-hidden');
+          }
+        }
+        if (mutation.type === 'attributes' && mutation.attributeName === 'inert') {
+          if (moat.hasAttribute('inert')) {
+            moat.removeAttribute('inert');
+          }
+        }
+      }
+    });
+    ariaHiddenObserver.observe(moat, { attributes: true, attributeFilter: ['aria-hidden', 'inert'] });
+
+    // Prevent all clicks inside the moat from bubbling to the page
+    // This prevents extension UI from triggering page modal closes (e.g., Radix UI dialogs)
+    moat.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
     // Event listeners
     moat.querySelector('.float-moat-close').addEventListener('click', hideMoat);
     
@@ -1312,15 +1336,20 @@
       
       document.body.appendChild(modal);
       console.log('Moat: Modal added to page, setting up button listeners...');
-      
+
+      // Prevent clicks inside modal from bubbling to page (closes modals like Radix UI)
+      modal.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+
       modal.querySelector('.float-modal-cancel').addEventListener('click', () => {
         console.log('Moat: User clicked Cancel');
         modal.remove();
         resolve(false);
       });
-      
+
       modal.querySelector('.float-modal-confirm').addEventListener('click', () => {
-        console.log('Moat: User clicked Connect Project');  
+        console.log('Moat: User clicked Connect Project');
         modal.remove();
         resolve(true);
       });
@@ -1406,17 +1435,22 @@
       </div>
     `;
     
+    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
     // Position menu below button (or above if docked at bottom)
     const button = moat.querySelector('.float-moat-tools-dropdown');
     if (!button) {
       console.warn('Could not find tools dropdown button');
       return;
     }
-    
+
     // Use shared positioning function
     positionMenu(menu, button);
-    
-    // Handle menu clicks
+
+    // Handle menu action clicks
     menu.addEventListener('click', async (e) => {
       const item = e.target.closest('.float-project-menu-item');
       if (item) {
@@ -1491,16 +1525,21 @@
       </div>
     `;
     
+    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
     // Position menu below button (or above if docked at bottom)
     const button = moat.querySelector('.float-moat-project-dropdown');
     if (!button) {
       console.warn('Could not find project dropdown button');
       return;
     }
-    
+
     // Use shared positioning function
     positionMenu(menu, button);
-    
+
     // Update badge count for clear screenshots option
     if (canUseNewTaskSystem() && window.taskStore) {
       const completedTasks = window.taskStore.getTasks().filter(t => t.status === 'done' && t.screenshotPath);
@@ -1648,18 +1687,23 @@
     const menu = document.createElement('div');
     menu.className = 'float-more-menu';
     menu.innerHTML = menuHTML;
-    
+
+    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
     // Position menu using shared positioning function
     const button = moat.querySelector('.float-moat-more-btn');
     if (!button) {
       console.warn('Could not find more button');
       return;
     }
-    
+
     // Use shared positioning function
     positionMenu(menu, button);
-    
-    // Handle menu clicks
+
+    // Handle menu action clicks
     menu.addEventListener('click', (e) => {
       const item = e.target.closest('.float-more-menu-item');
       if (item) {
@@ -1840,7 +1884,9 @@
 
       document.body.appendChild(modal);
 
+      // Prevent clicks inside modal from bubbling to page (closes modals like Radix UI)
       modal.addEventListener('click', (e) => {
+        e.stopPropagation();
         const button = e.target.closest('[data-action]');
         if (button) {
           const action = button.dataset.action;
@@ -2354,7 +2400,8 @@
       // Task 3.3: Check if new TaskStore system is available
       if (canUseNewTaskSystem()) {
         console.log('🔄 Moat: Using new TaskStore system for refresh');
-        await refreshFromFiles();
+        // Only regenerate markdown on manual refresh, not on initial load
+        await refreshFromFiles(!silent);
       } else {
         console.log('🔄 Moat: Using legacy system for refresh');
         await syncMarkdownTasksToSidebar();
@@ -2396,25 +2443,28 @@
   }
 
   // Task 3.3: New refresh function that reads JSON and regenerates markdown
-  async function refreshFromFiles() {
+  // regenerateMarkdown=false for fast display, true for full sync
+  async function refreshFromFiles(regenerateMarkdown = false) {
     console.log('🔄 Moat: Starting refreshFromFiles with new TaskStore system');
-    
+
     if (!window.taskStore || !window.markdownGenerator) {
       throw new Error('TaskStore utilities not available');
     }
-    
+
     try {
       // Load tasks from file first (to get latest from disk)
       await window.taskStore.loadTasksFromFile();
-      
+
       // Read all tasks from TaskStore in chronological order
       const allTasks = window.taskStore.getAllTasksChronological();
       console.log(`🔄 Moat: Loaded ${allTasks.length} tasks from TaskStore`);
-      
-      // Regenerate markdown from current TaskStore data
-      await window.markdownGenerator.rebuildMarkdownFile(allTasks);
-      console.log('🔄 Moat: Markdown file regenerated from TaskStore data');
-      
+
+      // Only regenerate markdown on explicit refresh, not on initial display
+      if (regenerateMarkdown) {
+        await window.markdownGenerator.rebuildMarkdownFile(allTasks);
+        console.log('🔄 Moat: Markdown file regenerated from TaskStore data');
+      }
+
       // Task 3.6: Update sidebar rendering to use new task format
       await renderTasksFromNewSystem(allTasks);
       

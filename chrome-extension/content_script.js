@@ -3138,16 +3138,34 @@ JSON stores relative paths like \`./screenshots/file.png\`, but actual files are
     // Append to shadow root for CSS isolation (if available), otherwise fallback to body
     const container = window.moatShadowRoot || document.body;
     container.appendChild(commentBox);
-    
+
+    // Prevent clicks inside comment box from bubbling to page (closes modals like Radix UI)
+    commentBox.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    // Prevent modal libraries from hiding comment box via aria-hidden/inert
+    const commentBoxObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.attributeName === 'aria-hidden' && commentBox.getAttribute('aria-hidden') === 'true') {
+          commentBox.removeAttribute('aria-hidden');
+        }
+        if (mutation.attributeName === 'inert' && commentBox.hasAttribute('inert')) {
+          commentBox.removeAttribute('inert');
+        }
+      }
+    });
+    commentBoxObserver.observe(commentBox, { attributes: true, attributeFilter: ['aria-hidden', 'inert'] });
+
     // Position near cursor (using actual click coordinates)
     const boxWidth = 320;
     const boxHeight = 120; // Approximate height
     const padding = 10;
-    
+
     // Calculate optimal position near cursor
     let left = x + padding;
     let top = y + padding;
-    
+
     // Ensure comment box stays within viewport boundaries
     // Check right edge
     if (left + boxWidth > window.innerWidth) {
@@ -3484,16 +3502,34 @@ JSON stores relative paths like \`./screenshots/file.png\`, but actual files are
     // Append to shadow root for CSS isolation (if available), otherwise fallback to body
     const container = window.moatShadowRoot || document.body;
     container.appendChild(commentBox);
-    
+
+    // Prevent clicks inside comment box from bubbling to page (closes modals like Radix UI)
+    commentBox.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    // Prevent modal libraries from hiding comment box via aria-hidden/inert
+    const commentBoxObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.attributeName === 'aria-hidden' && commentBox.getAttribute('aria-hidden') === 'true') {
+          commentBox.removeAttribute('aria-hidden');
+        }
+        if (mutation.attributeName === 'inert' && commentBox.hasAttribute('inert')) {
+          commentBox.removeAttribute('inert');
+        }
+      }
+    });
+    commentBoxObserver.observe(commentBox, { attributes: true, attributeFilter: ['aria-hidden', 'inert'] });
+
     // Position near cursor (using actual mouse coordinates)
     const boxWidth = 320;
     const boxHeight = 120; // Approximate height
     const padding = 10;
-    
+
     // Calculate optimal position near cursor
     let left = x + padding;
     let top = y + padding;
-    
+
     // Ensure comment box stays within viewport boundaries
     if (left + boxWidth > window.innerWidth) {
       left = x - boxWidth - padding;

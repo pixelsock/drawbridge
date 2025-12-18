@@ -383,7 +383,8 @@ body.float-drawing-mode * {
   z-index: 10002;
   animation: float-slide-up 0.3s ease;
   max-width: 300px;
-  pointer-events: auto;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
   transition: all 0.3s ease;
 }
 
@@ -413,6 +414,8 @@ body.float-drawing-mode * {
   padding: 16px;
   z-index: 10001;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
 }
 
 /* Shake animation for comment box */
@@ -497,6 +500,8 @@ body.float-drawing-mode * {
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: flex;
   flex-direction: column;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
 }
 
 /* Right position (default) */
@@ -1957,6 +1962,8 @@ body.float-drawing-mode * {
   max-height: calc(100vh - 20px);
   min-width: 220px;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
 }
 
 .float-project-menu-item {
@@ -2072,6 +2079,8 @@ body.float-drawing-mode * {
   max-height: calc(100vh - 20px);
   min-width: 160px;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
 }
 
 .float-more-menu-item {
@@ -2111,6 +2120,8 @@ body.float-drawing-mode * {
   justify-content: center;
   z-index: 10004;
   animation: float-fade-in 0.2s ease;
+  /* Override pointer-events: none from modal overlays (e.g., Radix UI dialogs) */
+  pointer-events: auto !important;
 }
 
 @keyframes float-fade-in {
