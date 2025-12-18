@@ -1215,10 +1215,13 @@
     });
     ariaHiddenObserver.observe(moat, { attributes: true, attributeFilter: ['aria-hidden', 'inert'] });
 
-    // Prevent all clicks inside the moat from bubbling to the page
+    // Prevent all mouse/pointer events inside the moat from bubbling to the page
     // This prevents extension UI from triggering page modal closes (e.g., Radix UI dialogs)
-    moat.addEventListener('click', function(e) {
-      e.stopPropagation();
+    // Radix UI listens to mousedown/pointerdown, not just click
+    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+      moat.addEventListener(eventType, function(e) {
+        e.stopPropagation();
+      }, true); // Use capture phase to catch events early
     });
 
     // Event listeners
@@ -1337,9 +1340,11 @@
       document.body.appendChild(modal);
       console.log('Moat: Modal added to page, setting up button listeners...');
 
-      // Prevent clicks inside modal from bubbling to page (closes modals like Radix UI)
-      modal.addEventListener('click', function(e) {
-        e.stopPropagation();
+      // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
+      ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+        modal.addEventListener(eventType, function(e) {
+          e.stopPropagation();
+        }, true);
       });
 
       modal.querySelector('.float-modal-cancel').addEventListener('click', () => {
@@ -1435,9 +1440,11 @@
       </div>
     `;
     
-    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
-    menu.addEventListener('click', function(e) {
-      e.stopPropagation();
+    // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
+    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+      menu.addEventListener(eventType, function(e) {
+        e.stopPropagation();
+      }, true);
     });
 
     // Position menu below button (or above if docked at bottom)
@@ -1524,10 +1531,12 @@
         <span style="color: #DC2626;">Disconnect project</span>
       </div>
     `;
-    
-    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
-    menu.addEventListener('click', function(e) {
-      e.stopPropagation();
+
+    // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
+    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+      menu.addEventListener(eventType, function(e) {
+        e.stopPropagation();
+      }, true);
     });
 
     // Position menu below button (or above if docked at bottom)
@@ -1688,9 +1697,11 @@
     menu.className = 'float-more-menu';
     menu.innerHTML = menuHTML;
 
-    // Prevent clicks inside menu from bubbling to page (closes modals like Radix UI)
-    menu.addEventListener('click', function(e) {
-      e.stopPropagation();
+    // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
+    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+      menu.addEventListener(eventType, function(e) {
+        e.stopPropagation();
+      }, true);
     });
 
     // Position menu using shared positioning function
@@ -1884,9 +1895,15 @@
 
       document.body.appendChild(modal);
 
-      // Prevent clicks inside modal from bubbling to page (closes modals like Radix UI)
+      // Prevent all mouse/pointer events from bubbling to page (closes modals like Radix UI)
+      ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(eventType => {
+        modal.addEventListener(eventType, function(e) {
+          e.stopPropagation();
+        }, true);
+      });
+
+      // Handle modal button clicks
       modal.addEventListener('click', (e) => {
-        e.stopPropagation();
         const button = e.target.closest('[data-action]');
         if (button) {
           const action = button.dataset.action;
