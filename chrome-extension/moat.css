@@ -441,6 +441,14 @@ body.float-drawing-mode * {
   transition: border-color 0.2s;
   background: var(--moat-bg-primary);
   color: var(--moat-text-primary);
+  /* Override pointer-events: none from modal overlays */
+  pointer-events: auto !important;
+}
+
+/* Ensure all children of extension elements are interactive */
+.float-comment-box *,
+.float-moat * {
+  pointer-events: auto;
 }
 
 .float-comment-input:focus {

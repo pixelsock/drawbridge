@@ -1,7 +1,7 @@
 // Moat Moat - Sidebar Component
 (function() {
   // Build identifier - incremented with each code change to verify correct version is loaded
-  const BUILD_VERSION = 4;
+  const BUILD_VERSION = 5;
   console.log('%c 🏰 DRAWBRIDGE v' + BUILD_VERSION + ' ', 'background: #e74c3c; color: white; font-size: 14px; padding: 4px 8px; border-radius: 4px;');
 
   let moat = null;
